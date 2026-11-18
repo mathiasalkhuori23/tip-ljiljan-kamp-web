@@ -194,6 +194,7 @@ function render() {
   const locked = bye || savingTip || !matchDataReady || selected.cancelled || Boolean(selected.result) || Date.now() >= matchTime(selected);
   const [home,away] = teams(selected);
   el('competition').textContent = selected.competition;
+  el('competition').classList.toggle('winter-competition', /^vinterbold$/i.test(selected.competition));
   if (el('match').dataset.matchId !== selected.id) {
     renderMatchup(el('match'), [home, away], selected.id, false, selected);
     el('match').dataset.matchId = selected.id;
