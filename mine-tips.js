@@ -7,46 +7,6 @@ function teams(match) {
 }
 let knownMatches = [];
 let state = readState();
-let nameVersion = 0;
-
-function showProfileName(name) {
-  el('editProfile').hidden = !name;
-  const field = el('profileName');
-  if (field.value === field.defaultValue) field.value = name;
-  field.defaultValue = name;
-}
-
-el('editName').addEventListener('submit', async event => {
-  event.preventDefault();
-  const field = el('profileName');
-  const button = el('saveName');
-  const status = el('nameStatus');
-  if (button.disabled) return;
-  const name = field.value.trim();
-  if (!name) {
-    status.textContent = 'Skriv et kaldenavn.';
-    field.focus();
-    return;
-  }
-  nameVersion++;
-  button.disabled = true;
-  field.readOnly = true;
-  status.textContent = '';
-  try {
-    const updated = await competitionRequest('profile/name', {name});
-    field.value = updated.name;
-    field.defaultValue = updated.name;
-    const saved = readState();
-    saved.alias = updated.name;
-    persist(saved);
-    status.textContent = 'Dit kaldenavn er opdateret.';
-  } catch (error) {
-    status.textContent = error.message;
-  } finally {
-    field.readOnly = false;
-    button.disabled = false;
-  }
-});
 
 function renderMyTips() {
   const matches = new Map([...fixtures, ...knownMatches].map(match => [match.id, match]));
@@ -80,15 +40,11 @@ function renderMyTips() {
 }
 
 async function refreshMyTips() {
-  const loadedNameVersion = nameVersion;
   state = readState();
   const [profile, feed] = await Promise.allSettled([
     competitionRequest('profile'), loadMatchFeed()
   ]);
-  if (profile.status === 'fulfilled') {
-    Object.assign(state.tips, profile.value.tips);
-    if (loadedNameVersion === nameVersion && !el('saveName').disabled) showProfileName(profile.value.name);
-  }
+  if (profile.status === 'fulfilled') Object.assign(state.tips, profile.value.tips);
   if (feed.status === 'fulfilled') knownMatches = feed.value.matches;
   el('myTipsStatus').hidden = profile.status === 'fulfilled' && feed.status === 'fulfilled';
   renderMyTips();
