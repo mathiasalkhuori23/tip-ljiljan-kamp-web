@@ -5,13 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Gæt kampens resultat og se din placering i FK Ljiljans tipkonkurrence.">
 <title>Mine tips · Tip Ljiljans kamp</title>
-<link rel="stylesheet" href="../style.css?v=my-tips">
+<link rel="stylesheet" href="../style.css?v=profile-name">
 </head>
 <body>
 <header><div class="wrap"><div class="brand"><span class="crest" aria-hidden="true">⚜</span>F.K. Ljiljan</div><nav class="site-tabs" aria-label="Hovedmenu"><a href="../">Kamptips</a><a href="../mine-tips/" aria-current="page">Mine tips</a><a href="../saesontips/">Sæsontips</a><a href="../rangliste/">Rangliste</a><a href="../praemie/">Præmier</a><a href="../stats/">Statistikker</a></nav></div></header>
 <main class="wrap">
 <section class="panel" id="mine-tips" aria-labelledby="myTipsTitle">
 <h1 id="myTipsTitle">Mine tips</h1>
+<details id="editProfile" hidden>
+<summary>Skift kaldenavn</summary>
+<form id="editName">
+<label class="name">Kaldenavn<input id="profileName" maxlength="40" required></label>
+<button class="secondary" type="submit" id="saveName">Gem kaldenavn</button>
+</form>
+<p id="nameStatus" class="status" role="status"></p>
+</details>
 <p id="myTipsStatus" class="sub" role="status" hidden>Alle tips kunne ikke hentes lige nu.</p>
 <p id="myTipsEmpty" class="sub">Du har ingen gemte kamptips endnu.</p>
 <ul id="myTipsList" class="my-tips-list"></ul>
@@ -24,6 +32,6 @@
 <script src="../tips.js"></script>
 <script src="../kampdata.js"></script>
 <script src="../competition-client.js"></script>
-<script src="../mine-tips.js?v=2"></script>
+<script src="../mine-tips.js?v=3"></script>
 </body>
 </html>

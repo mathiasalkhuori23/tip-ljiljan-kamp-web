@@ -70,6 +70,10 @@
 }
 
 #mine-tips { margin-block-start: 1rem; }
+#editProfile summary { cursor: pointer; }
+#editName { max-inline-size: 22rem; margin-block-start: .75rem; }
+#saveName { margin-block-start: .75rem; }
+#nameStatus:empty { display: none; }
 .my-tips-list { display: grid; gap: .75rem; padding: 0; list-style: none; }
 .my-tips-list:empty { display: none; }
 .my-tips-list li { padding-block: .5rem; overflow-wrap: anywhere; }
