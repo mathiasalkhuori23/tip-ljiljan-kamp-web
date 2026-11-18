@@ -7,6 +7,7 @@ function teams(match) {
 }
 let knownMatches = [];
 let state = readState();
+let requestedTip = /^#tip-[0-9]+$/.test(location.hash) ? location.hash.slice(1) : '';
 
 function renderMyTips() {
   const matches = new Map([...fixtures, ...knownMatches].map(match => [match.id, match]));
@@ -19,6 +20,8 @@ function renderMyTips() {
   el('myTipsEmpty').hidden = entries.length > 0;
   el('myTipsList').replaceChildren(...entries.map(({id, match, tip, kickoff}) => {
     const item = document.createElement('li');
+    item.id = 'tip-' + id;
+    item.tabIndex = -1;
     const title = document.createElement('strong');
     title.textContent = match ? teams(match).join(' – ') : 'Kamp ' + id;
     item.append(title);
@@ -48,6 +51,12 @@ async function refreshMyTips() {
   if (feed.status === 'fulfilled') knownMatches = feed.value.matches;
   el('myTipsStatus').hidden = profile.status === 'fulfilled' && feed.status === 'fulfilled';
   renderMyTips();
+  const target = requestedTip && el(requestedTip);
+  if (target) {
+    requestedTip = '';
+    target.focus();
+    target.scrollIntoView({block: 'center'});
+  }
 }
 
 renderMyTips();

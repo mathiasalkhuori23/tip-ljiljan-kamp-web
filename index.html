@@ -18,8 +18,13 @@
 <p class="sub">Vælg en kamp for at tippe. Dit tip låses ved kampstart. Se ændringer og nye kampe i <a href="https://fkljiljan.dk/kampe/">klubbens kampprogram</a>.</p>
 <p class="sub" id="matchFeedStatus" role="status">Henter klubbens kampdata…</p>
 <div id="matchReminders" hidden>
-<button class="secondary" id="reminderToggle" type="button" aria-describedby="reminderStatus" disabled>Slå kamppåmindelser til</button>
-<p class="help" id="reminderStatus" role="status">Få besked 30 minutter før kampstart, hvis du mangler at tippe.</p>
+<div id="reminderOptions">
+<button class="secondary" id="reminderToggle" type="button" aria-describedby="beforeReminderHelp" disabled>Slå kamppåmindelser til</button>
+<p class="help" id="beforeReminderHelp">Få besked 30 minutter før kampstart, hvis du mangler at tippe.</p>
+<button class="secondary" id="resultReminderToggle" type="button" aria-describedby="resultReminderHelp" disabled>Slå pointbeskeder til</button>
+<p class="help" id="resultReminderHelp">Få dine point, når slutresultatet er registreret.</p>
+</div>
+<p class="help" id="reminderStatus" role="status" hidden></p>
 </div>
 <ul id="upcoming"></ul>
 <details><summary id="historyTitle">Tidligere kampe</summary><div id="archive"></div></details>
@@ -63,6 +68,6 @@
 <script src="kampdata.js"></script>
 <script src="competition-client.js"></script>
 <script src="app.js?v=13"></script>
-<script src="reminders.js"></script>
+<script src="reminders.js?v=2"></script>
 </body>
 </html>
