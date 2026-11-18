@@ -30,6 +30,7 @@ for (const button of document.querySelectorAll('.history-player')) {
     portrait.addEventListener('error', () => portrait.remove(), {once: true});
     portraitSlot.replaceChildren(portrait);
     const key = name.toLowerCase().normalize('NFKD').replaceAll('đ', 'd').replace(/[^a-z0-9]/g, '');
+    if (key === 'alminhandanagic') portrait.style.objectPosition = 'center 3%';
     apiFetch('/api/player-portraits').then(response => response.ok ? response.json() : {})
       .then(photos => {
         if (portrait.isConnected && Object.hasOwn(photos, key)) portrait.src = photos[key];
