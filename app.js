@@ -130,11 +130,15 @@ function renderMatchPreview() {
     playedAt: match.source?.kickoff ?? Date.parse(match.day.split('.').reverse().join('-') + 'T12:00:00+01:00')
   })).filter(match => match.id !== selected.id && match.playedAt < cutoff)
     .sort((first, second) => second.playedAt - first.playedAt);
+  renderPreviewList('recentResults', history.filter(match => /^\d+[–-]\d+$/.test(match.score)).slice(0, 5));
+  const section = el('opponentHistorySection');
+  section.hidden = opponent === 'oversidder';
+  if (section.hidden) return;
+
   const previousMeetings = history.filter(match =>
     opponentKey(match.source?.opponent ?? (match.home === clubName ? match.away : match.home)) === opponent
   );
   el('opponentHistoryTitle').textContent = 'Tidligere opgør mod ' + selected.opponent;
-  renderPreviewList('recentResults', history.filter(match => /^\d+[–-]\d+$/.test(match.score)).slice(0, 5));
   renderPreviewList('opponentHistory', previousMeetings);
 }
 function selectedPlayers(role) {
