@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Gæt FK Ljiljans slutplacering for Serie 3 og Serie 5.">
+<title>Sæsontips · Tip Ljiljans kamp</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header><div class="wrap"><div class="brand"><span class="crest" aria-hidden="true">⚜</span>F.K. Ljiljan</div><nav class="site-tabs" aria-label="Hovedmenu"><a href="../">Kamptips</a><a href="../mine-tips/">Mine tips</a><a href="../saesontips/" aria-current="page">Sæsontips</a><a href="../rangliste/">Rangliste</a><a href="../praemie/">Præmier</a><a href="../stats/">Stats</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="pitch" aria-hidden="true"></div><div class="hero-copy"><p class="kicker">Forår 2027</p><h1>Sæsontips</h1><p>Gæt, hvor Ljiljan ender i tabellen.</p></div><img class="hero-logo" src="../ljiljan-logo.png" width="500" height="500" alt="F.K. Ljiljans logo"></section>
+<section class="panel season" id="saesontip" aria-labelledby="seasonTitle">
+<h2 id="seasonTitle">Hvor ender Ljiljan?</h2>
+<p class="sub">Gæt slutplaceringen for Serie 3, Serie 5 eller begge hold. Placeringerne 1–12 er foreløbige, indtil forårets puljer er bekræftet.</p>
+<form id="seasonGuess">
+<label for="seasonTeam">Hold</label>
+<select id="seasonTeam"><option value="serie3">Serie 3</option><option value="serie5">Serie 5</option></select>
+<label for="place">Slutplacering</label>
+<select id="place" required><option value="">Vælg en placering</option></select>
+<button class="primary" type="submit">Gem min slutplacering</button>
+</form>
+<p class="status" id="seasonFeedback" role="status"></p>
+</section>
+</main>
+<footer class="wrap">Dine tips gemmes i denne browser. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
+<script src="../tips.js"></script>
+<script src="../season.js"></script>
+</body>
+</html>

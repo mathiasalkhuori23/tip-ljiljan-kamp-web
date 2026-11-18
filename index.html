@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Gæt kampens resultat og se din placering i FK Ljiljans tipkonkurrence.">
+<title>Tip Ljiljans kamp</title>
+<link rel="stylesheet" href="./style.css?v=my-tips">
+</head>
+<body>
+<header><div class="wrap"><div class="brand"><span class="crest" aria-hidden="true">⚜</span>F.K. Ljiljan</div><nav class="site-tabs" aria-label="Hovedmenu"><a href="./" aria-current="page">Kamptips</a><a href="./mine-tips/">Mine tips</a><a href="./saesontips/">Sæsontips</a><a href="./rangliste/">Rangliste</a><a href="./praemie/">Præmier</a><a href="./stats/">Stats</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="pitch" aria-hidden="true"></div><div class="hero-copy"><p class="kicker">Fan­konkurrence</p><h1>Tip Ljiljans kamp</h1><p>Gæt slutresultatet, saml point, og se hvor du ender på ranglisten.</p></div><img class="hero-logo" src="./ljiljan-logo.png" width="500" height="500" alt="F.K. Ljiljans logo"></section>
+<div class="grid tip-layout">
+<section class="panel schedule" aria-labelledby="program">
+<h2 id="program">Kampprogram</h2>
+<p class="sub">Vælg en kamp for at tippe. Dit tip låses ved kampstart. Se ændringer og nye kampe i <a href="https://fkljiljan.dk/kampe/">klubbens kampprogram</a>.</p>
+<p class="sub" id="matchFeedStatus" role="status">Henter klubbens kampdata…</p>
+<ul id="upcoming"></ul>
+<details><summary id="historyTitle">Tidligere kampe</summary><div id="archive"></div></details>
+</section>
+<section class="panel" id="kamptip" aria-labelledby="match">
+<p class="kicker" id="competition"></p>
+<h2 id="match" class="team-matchup" tabindex="-1"></h2>
+<p class="sub" id="matchDate"></p>
+<form id="guess">
+<div class="score"><label><span id="homeLabel"></span><input id="home" type="number" inputmode="numeric" min="0" max="99" step="1" required placeholder="0"></label><span aria-hidden="true">–</span><label><span id="awayLabel"></span><input id="away" type="number" inputmode="numeric" min="0" max="99" step="1" required placeholder="0"></label></div>
+<fieldset class="player-tips" id="playerTips">
+<legend>Spillertips for F.K. Ljiljan (valgfrit)</legend>
+<details class="player-picker">
+<summary>Vælg målscorere <span id="scorerCount"></span></summary>
+<div class="player-options" id="scorer"></div>
+</details>
+<details class="player-picker">
+<summary>Vælg assistmagere <span id="assistCount"></span></summary>
+<div class="player-options" id="assist"></div>
+</details>
+<p class="help" id="squadStatus">Vælg blandt Ljiljans spillere.</p>
+</fieldset>
+<label class="name">Dit kaldenavn<input id="alias" maxlength="40" maxlength="24" required placeholder="Fx LjiljanFan"></label>
+<button class="primary" id="save" type="submit">Gem mit tip</button>
+</form>
+<p class="status" id="feedback" role="status"></p>
+<p id="result" class="result" hidden></p>
+</section>
+
+</div>
+</main>
+<footer class="wrap">Dine nye kamptips gemmes i konkurrencen. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
+<script src="./backend-config.js"></script>
+<script src="./api.js"></script>
+<script src="fixtures.js"></script>
+<script src="logos.js"></script>
+<script src="players.js"></script>
+<script src="tips.js?v=3"></script>
+<script src="player-positions.js"></script>
+<script src="kampdata.js"></script>
+<script src="competition-client.js"></script>
+<script src="app.js?v=10"></script>
+</body>
+</html>
