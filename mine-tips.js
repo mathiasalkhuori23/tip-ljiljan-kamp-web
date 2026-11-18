@@ -9,6 +9,22 @@ let knownMatches = [];
 let state = readState();
 let requestedTip = /^#tip-[0-9]+$/.test(location.hash) ? location.hash.slice(1) : '';
 
+function renderSeasonTips() {
+  const entries = [['serie3', 'Serie 3'], ['serie5', 'Serie 5']].flatMap(([team, label]) => {
+    const place = state.season?.[team];
+    if (!Number.isInteger(place) || place < 1 || place > 12) return [];
+    const item = document.createElement('li');
+    const title = document.createElement('strong');
+    title.textContent = label;
+    const prediction = document.createElement('div');
+    prediction.textContent = 'Dit tip: ' + place + '. plads';
+    item.append(title, prediction);
+    return [item];
+  });
+  el('mySeasonTipsEmpty').hidden = entries.length > 0;
+  el('mySeasonTipsList').replaceChildren(...entries);
+}
+
 function renderMyTips() {
   const matches = new Map([...fixtures, ...knownMatches].map(match => [match.id, match]));
   const entries = Object.entries(state.tips).flatMap(([id, tip]) => {
@@ -51,6 +67,7 @@ async function refreshMyTips() {
   if (feed.status === 'fulfilled') knownMatches = feed.value.matches;
   el('myTipsStatus').hidden = profile.status === 'fulfilled' && feed.status === 'fulfilled';
   renderMyTips();
+  renderSeasonTips();
   const target = requestedTip && el(requestedTip);
   if (target) {
     requestedTip = '';
@@ -60,6 +77,7 @@ async function refreshMyTips() {
 }
 
 renderMyTips();
+renderSeasonTips();
 refreshMyTips();
 window.addEventListener('pageshow', event => {
   if (event.persisted) refreshMyTips();

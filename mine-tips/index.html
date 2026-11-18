@@ -12,9 +12,18 @@
 <main class="wrap">
 <section class="panel" id="mine-tips" aria-labelledby="myTipsTitle">
 <h1 id="myTipsTitle">Mine tips</h1>
-<p id="myTipsStatus" class="sub" role="status" hidden>Alle tips kunne ikke hentes lige nu.</p>
+<section aria-labelledby="myMatchTipsTitle">
+<h2 id="myMatchTipsTitle">Kamptips</h2>
+<p id="myTipsStatus" class="sub" role="status" hidden>Kamptips kunne ikke hentes lige nu.</p>
 <p id="myTipsEmpty" class="sub">Du har ingen gemte kamptips endnu.</p>
 <ul id="myTipsList" class="my-tips-list"></ul>
+</section>
+<section aria-labelledby="mySeasonTipsTitle">
+<h2 id="mySeasonTipsTitle">Sæsontips</h2>
+<p class="sub">Forår 2027</p>
+<p id="mySeasonTipsEmpty" class="sub">Du har ingen gemte sæsontips endnu.</p>
+<ul id="mySeasonTipsList" class="my-tips-list"></ul>
+</section>
 </section>
 </main>
 <script src="../backend-config.js"></script>
@@ -24,6 +33,6 @@
 <script src="../tips.js"></script>
 <script src="../kampdata.js"></script>
 <script src="../competition-client.js"></script>
-<script src="../mine-tips.js?v=5"></script>
+<script src="../mine-tips.js?v=6"></script>
 </body>
 </html>
