@@ -213,6 +213,7 @@ function render() {
     : 'Vælg blandt Ljiljans spillere.';
   el('save').textContent = savingTip ? 'Gemmer…' : !matchDataReady ? 'Afventer kampdata' : locked ? 'Tip lukket' : tip ? 'Opdater mit tip' : 'Gem mit tip';
   el('result').hidden = !bye && !selected.result && !selected.cancelled;
+  el('result').classList.toggle('bye-notice', bye);
   if (bye) {
     el('result').textContent = 'Ljiljan sidder over i denne runde. Der spilles ingen kamp.';
   } else if (selected.cancelled) {

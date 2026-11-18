@@ -11,6 +11,7 @@
 .site-tabs a[aria-current="page"]{background:#a8c2ff;color:#0a1d45;font-weight:800}
 .tip-layout{align-items:start}
 .tip-layout .schedule{margin-top:0}
+.result.bye-notice{color:#fff}
 .match-preview h3{font-size:.98rem;line-height:1.35;margin:1rem 0 .4rem}
 .preview-results{list-style:none;padding:0;margin:0}
 .preview-result{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.5rem;padding:.55rem 0;border-bottom:1px solid var(--border)}
