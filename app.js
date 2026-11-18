@@ -159,7 +159,6 @@ function render() {
   for (const id of ['home','away']) el(id).disabled = locked;
   el('save').disabled = locked || savingAlias;
   el('alias').disabled = savingTip || savingAlias || (!competitionName && locked);
-  renderAliasButton();
   const hasSquad = Boolean(selected.squad?.length);
   el('playerTips').disabled = locked;
   el('squadStatus').textContent = hasSquad
@@ -183,12 +182,6 @@ function render() {
 }
 for (const role of ['scorer', 'assist']) {
   el(role).addEventListener('change', () => updatePlayerCount(role));
-}
-
-function renderAliasButton() {
-  const button = el('saveAlias');
-  button.hidden = !competitionName;
-  button.disabled = savingTip || savingAlias || el('alias').value.trim() === competitionName;
 }
 
 async function updateAlias(name) {
@@ -230,7 +223,6 @@ async function saveAlias() {
 
 el('alias').addEventListener('input', () => {
   el('aliasStatus').textContent = '';
-  renderAliasButton();
 });
 el('alias').addEventListener('keydown', event => {
   if (event.key === 'Enter' && competitionName && !event.isComposing) {
@@ -238,8 +230,6 @@ el('alias').addEventListener('keydown', event => {
     saveAlias();
   }
 });
-el('saveAlias').addEventListener('click', saveAlias);
-
 el('guess').addEventListener('submit', async event => {
   event.preventDefault();
   if (savingTip || savingAlias || !matchDataReady || selected.cancelled || selected.result || Date.now() >= matchTime(selected)) return;

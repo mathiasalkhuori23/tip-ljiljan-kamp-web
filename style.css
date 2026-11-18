@@ -70,7 +70,6 @@
 }
 
 #mine-tips { margin-block-start: 1rem; }
-#saveAlias { margin-block-start: .75rem; }
 #aliasStatus:empty { display: none; }
 .my-tips-list { display: grid; gap: .75rem; padding: 0; list-style: none; }
 .my-tips-list:empty { display: none; }
