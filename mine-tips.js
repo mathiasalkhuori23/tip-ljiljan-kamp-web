@@ -5,37 +5,22 @@ function matchTime(match) {
 function teams(match) {
   return match.home ? [clubName, match.opponent] : [match.opponent, clubName];
 }
-let knownMatches = fixtures;
+let knownMatches = [];
 let state = readState();
 
-const seasonDate = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Europe/Copenhagen', year: 'numeric', month: 'numeric'
-});
-
-function competitionSeason(timestamp) {
-  const parts = seasonDate.formatToParts(timestamp);
-  const year = Number(parts.find(part => part.type === 'year').value);
-  const month = Number(parts.find(part => part.type === 'month').value);
-  if (month >= 12) return year + '-12';
-  if (month >= 7) return year + '-07';
-  return (year - 1) + '-12';
-}
-
 function renderMyTips() {
-  const matches = new Map(knownMatches.map(match => [match.id, match]));
-  const currentSeason = competitionSeason(Date.now());
+  const matches = new Map([...fixtures, ...knownMatches].map(match => [match.id, match]));
   const entries = Object.entries(state.tips).flatMap(([id, tip]) => {
+    if (!Array.isArray(tip?.score)) return [];
     const match = matches.get(id);
-    if (!match || !Array.isArray(tip?.score)) return [];
-    const kickoff = matchTime(match);
-    if (!Number.isFinite(kickoff) || competitionSeason(kickoff) !== currentSeason) return [];
-    return [{match, tip, kickoff}];
+    const kickoff = match ? matchTime(match) : NaN;
+    return [{id, match, tip, kickoff: Number.isFinite(kickoff) ? kickoff : -Infinity}];
   }).sort((first, second) => second.kickoff - first.kickoff);
   el('myTipsEmpty').hidden = entries.length > 0;
-  el('myTipsList').replaceChildren(...entries.map(({match, tip}) => {
+  el('myTipsList').replaceChildren(...entries.map(({id, match, tip, kickoff}) => {
     const item = document.createElement('li');
     const title = document.createElement('strong');
-    title.textContent = teams(match).join(' – ');
+    title.textContent = match ? teams(match).join(' – ') : 'Kamp ' + id;
     item.append(title);
     const details = ['Dit tip: ' + tip.score.join('–')];
     for (const [role, label] of [['scorer', 'Målscorere'], ['assist', 'Assistmagere']]) {
@@ -44,7 +29,7 @@ function renderMyTips() {
     }
     if (match?.cancelled) details.push('Kampen er aflyst.');
     else if (match?.result) details.push('Slutresultat: ' + match.result.join('–') + ' · ' + tipPoints(tip, match) + ' point');
-    else if (match && Date.now() >= matchTime(match)) details.push('Afventer slutresultat');
+    else if (Number.isFinite(kickoff) && Date.now() >= kickoff) details.push('Afventer slutresultat');
     for (const detail of details) {
       const line = document.createElement('div');
       line.textContent = detail;
