@@ -6,6 +6,7 @@ let schedule = fixtures;
 let state = readState();
 let savingTip = false;
 let competitionName = '';
+let requestedMatch = new URLSearchParams(location.search).get('kamp');
 
 function matchTime(match) {
   return match.kickoff ?? Date.parse(match.date + '+01:00');
@@ -224,9 +225,11 @@ async function refreshMatches() {
     const {matches, local} = await loadMatchFeed();
     const now = Date.now();
     const next = matches.filter(match => (match.kickoff >= now && !match.result) || state.tips[match.id]);
-    const nextSelected = next.find(match => match.id === selected.id) ??
+    const nextSelected = (requestedMatch ? matches.find(match => match.id === requestedMatch) : undefined) ??
+      next.find(match => match.id === selected.id) ??
       next.find(match => match.kickoff >= now && !match.cancelled && !match.result) ??
       matches.find(match => match.id === selected.id) ?? matches.at(-1);
+    requestedMatch = null;
     const selectionChanged = selected.id !== nextSelected.id;
     const squadChanged = JSON.stringify(selected.squad ?? []) !== JSON.stringify(nextSelected.squad);
     const currentPicks = {scorer:selectedPlayers('scorer'), assist:selectedPlayers('assist')};

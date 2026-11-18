@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="app.webmanifest">
 <meta name="description" content="Gæt kampens resultat og se din placering i FK Ljiljans tipkonkurrence.">
 <title>Tip Ljiljans kamp</title>
 <link rel="stylesheet" href="./style.css?v=my-tips">
@@ -16,6 +17,10 @@
 <h2 id="program">Kampprogram</h2>
 <p class="sub">Vælg en kamp for at tippe. Dit tip låses ved kampstart. Se ændringer og nye kampe i <a href="https://fkljiljan.dk/kampe/">klubbens kampprogram</a>.</p>
 <p class="sub" id="matchFeedStatus" role="status">Henter klubbens kampdata…</p>
+<div id="matchReminders" hidden>
+<button class="secondary" id="reminderToggle" type="button" aria-describedby="reminderStatus" disabled>Slå kamppåmindelser til</button>
+<p class="help" id="reminderStatus" role="status">Få besked 30 minutter før kampstart, hvis du mangler at tippe.</p>
+</div>
 <ul id="upcoming"></ul>
 <details><summary id="historyTitle">Tidligere kampe</summary><div id="archive"></div></details>
 </section>
@@ -56,6 +61,7 @@
 <script src="player-positions.js"></script>
 <script src="kampdata.js"></script>
 <script src="competition-client.js"></script>
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
+<script src="reminders.js"></script>
 </body>
 </html>
