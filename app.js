@@ -51,17 +51,19 @@ function renderSchedule() {
   el('upcoming').replaceChildren();
   for (const match of schedule) {
     const tip = state.tips[match.id];
+    const bye = isBye(match);
     const row = document.createElement('li');
     row.className = 'fixture';
     const text = document.createElement('div');
     text.textContent = teams(match).join(' – ');
     const info = document.createElement('small');
-    info.textContent = dateLabel(match) + ' · ' + match.competition +
-      (tip ? ' · Dit tip ' + tip.score.join('–') : '');
+    info.textContent = (bye ? previewDate.format(matchTime(match)) : dateLabel(match)) + ' · ' + match.competition +
+      (tip && !bye ? ' · Dit tip ' + tip.score.join('–') : '');
     text.append(info);
     const button = document.createElement('button');
     button.className = 'secondary';
-    button.textContent = matchTime(match) <= Date.now() || match.result || match.cancelled ? 'Se kamp' : tip ? 'Se tip' : 'Tip kamp';
+    button.textContent = bye ? 'Se runde'
+      : matchTime(match) <= Date.now() || match.result || match.cancelled ? 'Se kamp' : tip ? 'Se tip' : 'Tip kamp';
     button.setAttribute('aria-pressed', String(match.id === selected.id));
     button.addEventListener('click', () => {
       selected = match;
@@ -132,7 +134,7 @@ function renderMatchPreview() {
     .sort((first, second) => second.playedAt - first.playedAt);
   renderPreviewList('recentResults', history.filter(match => /^\d+[–-]\d+$/.test(match.score)).slice(0, 5));
   const section = el('opponentHistorySection');
-  section.hidden = opponent === 'oversidder';
+  section.hidden = isBye(selected);
   if (section.hidden) return;
 
   const previousMeetings = history.filter(match =>
@@ -188,18 +190,21 @@ function restoreForm() {
 }
 function render() {
   const tip = state.tips[selected.id];
-  const locked = savingTip || !matchDataReady || selected.cancelled || Boolean(selected.result) || Date.now() >= matchTime(selected);
+  const bye = isBye(selected);
+  const locked = bye || savingTip || !matchDataReady || selected.cancelled || Boolean(selected.result) || Date.now() >= matchTime(selected);
   const [home,away] = teams(selected);
   el('competition').textContent = selected.competition;
   if (el('match').dataset.matchId !== selected.id) {
     renderMatchup(el('match'), [home, away], selected.id, false, selected);
     el('match').dataset.matchId = selected.id;
   }
-  el('matchDate').textContent = dateLabel(selected);
+  el('matchDate').textContent = bye ? previewDate.format(matchTime(selected)) : dateLabel(selected);
   el('homeLabel').textContent = home;
   el('awayLabel').textContent = away;
   for (const id of ['home','away']) el(id).disabled = locked;
   el('save').disabled = locked || savingAlias;
+  el('guess').hidden = bye;
+  el('feedback').hidden = bye;
   el('alias').disabled = savingTip || savingAlias || (!competitionName && locked);
   const hasSquad = Boolean(selected.squad?.length);
   el('playerTips').disabled = locked;
@@ -207,8 +212,10 @@ function render() {
     ? 'Vælg blandt de udtagne Ljiljan-spillere.'
     : 'Vælg blandt Ljiljans spillere.';
   el('save').textContent = savingTip ? 'Gemmer…' : !matchDataReady ? 'Afventer kampdata' : locked ? 'Tip lukket' : tip ? 'Opdater mit tip' : 'Gem mit tip';
-  el('result').hidden = !selected.result && !selected.cancelled;
-  if (selected.cancelled) {
+  el('result').hidden = !bye && !selected.result && !selected.cancelled;
+  if (bye) {
+    el('result').textContent = 'Ljiljan sidder over i denne runde. Der spilles ingen kamp.';
+  } else if (selected.cancelled) {
     el('result').textContent = 'Kampen er aflyst.';
   } else if (selected.result) {
     const details = [
@@ -275,7 +282,7 @@ el('alias').addEventListener('keydown', event => {
 });
 el('guess').addEventListener('submit', async event => {
   event.preventDefault();
-  if (savingTip || savingAlias || !matchDataReady || selected.cancelled || selected.result || Date.now() >= matchTime(selected)) return;
+  if (savingTip || savingAlias || !matchDataReady || isBye(selected) || selected.cancelled || selected.result || Date.now() >= matchTime(selected)) return;
   const name = el('alias').value.trim();
   if (!name) { el('feedback').textContent = 'Skriv dit kaldenavn.'; el('alias').focus(); return; }
   const match = selected;

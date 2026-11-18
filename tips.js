@@ -1,5 +1,8 @@
 const key = 'ljiljan-tip-demo-v2';
 const el = id => document.getElementById(id);
+function isBye(match) {
+  return /^oversidder$/i.test(match?.opponent?.trim() ?? '');
+}
 function readState() {
   try {
     const saved = JSON.parse(localStorage.getItem(key));
