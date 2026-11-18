@@ -11,6 +11,19 @@
 .site-tabs a[aria-current="page"]{background:#a8c2ff;color:#0a1d45;font-weight:800}
 .tip-layout{align-items:start}
 .tip-layout .schedule{margin-top:0}
+.match-preview h3{font-size:.98rem;line-height:1.35;margin:1rem 0 .4rem}
+.preview-results{list-style:none;padding:0;margin:0}
+.preview-result{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.5rem;padding:.55rem 0;border-bottom:1px solid var(--border)}
+.preview-result span:first-child{overflow-wrap:anywhere}
+.preview-result small{display:block;color:var(--muted);margin-top:.18rem}
+.preview-score{color:#dbe6ff;background:#1b294a;border-radius:.4rem;padding:.2rem .45rem;font-size:.85rem;font-weight:750;text-align:center;max-width:7rem}
+@media(min-width:691px) and (max-width:1049px){
+  .tip-layout{grid-template-areas:"schedule tip" "preview tip"}
+  .tip-layout .schedule{grid-area:schedule}
+  .tip-layout #kamptip{grid-area:tip}
+  .match-preview{grid-area:preview}
+}
+@media(min-width:1050px){.tip-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr)}}
 .ranking-panel{margin-top:20px}
 @media(max-width:430px){header .wrap{flex-wrap:wrap;gap:4px;padding:12px 0}.site-tabs{width:100%;margin:0}}
 

@@ -6,7 +6,7 @@
 <link rel="manifest" href="app.webmanifest">
 <meta name="description" content="Gæt kampens resultat og se din placering i FK Ljiljans tipkonkurrence.">
 <title>Tip Ljiljans kamp</title>
-<link rel="stylesheet" href="./style.css?v=profile-name-inline">
+<link rel="stylesheet" href="./style.css?v=optakt">
 </head>
 <body>
 <header><div class="wrap"><div class="brand"><span class="crest" aria-hidden="true">⚜</span>F.K. Ljiljan</div><nav class="site-tabs" aria-label="Hovedmenu"><a href="./" aria-current="page">Kamptips</a><a href="./mine-tips/">Mine tips</a><a href="./saesontips/">Sæsontips</a><a href="./rangliste/">Rangliste</a><a href="./praemie/">Præmier</a><a href="./stats/">Statistikker</a></nav></div></header>
@@ -45,7 +45,15 @@
 <p class="status" id="feedback" role="status"></p>
 <p id="result" class="result" hidden></p>
 </section>
-
+<aside class="panel match-preview" id="matchPreview" aria-labelledby="previewTitle">
+<h2 id="previewTitle">Optakt</h2>
+<h3>Ljiljans seneste fem resultater</h3>
+<ul class="preview-results" id="recentResults"></ul>
+<p class="sub" id="recentResultsEmpty" hidden>Ingen registrerede resultater.</p>
+<h3 id="opponentHistoryTitle">Tidligere opgør</h3>
+<ul class="preview-results" id="opponentHistory"></ul>
+<p class="sub" id="opponentHistoryEmpty" hidden>Ingen tidligere opgør i kampdataene.</p>
+</aside>
 </div>
 </main>
 <footer class="wrap">Dine nye kamptips gemmes i konkurrencen. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
@@ -58,6 +66,6 @@
 <script src="player-positions.js"></script>
 <script src="kampdata.js"></script>
 <script src="competition-client.js"></script>
-<script src="app.js?v=13"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>

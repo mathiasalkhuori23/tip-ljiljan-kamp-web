@@ -8,6 +8,7 @@ let savingTip = false;
 let savingAlias = false;
 let competitionName = '';
 let requestedMatch = new URLSearchParams(location.search).get('kamp');
+const previewDate = new Intl.DateTimeFormat('da-DK', {dateStyle:'medium', timeZone:'Europe/Copenhagen'});
 
 function matchTime(match) {
   return match.kickoff ?? Date.parse(match.date + '+01:00');
@@ -99,6 +100,43 @@ function renderArchive() {
     el('archive').append(title, list);
   }
 }
+function opponentKey(name) {
+  return name.toLowerCase().trim()
+    .replace(/\s*\((?:s[1-6][a-z]?|[1-9])\)$/, '')
+    .replaceAll('aa', 'å').normalize('NFD').replace(/[\p{Mark}\p{Punctuation}\s]/gu, '');
+}
+function renderPreviewList(id, matches) {
+  el(id + 'Empty').hidden = matches.length > 0;
+  el(id).replaceChildren(...matches.map(match => {
+    const row = document.createElement('li');
+    row.className = 'preview-result';
+    const matchup = document.createElement('span');
+    matchup.textContent = match.home + ' – ' + match.away;
+    const detail = document.createElement('small');
+    detail.textContent = previewDate.format(match.playedAt) + ' · ' + match.competition;
+    matchup.append(detail);
+    const score = document.createElement('span');
+    score.className = 'preview-score';
+    score.textContent = match.score;
+    row.append(matchup, score);
+    return row;
+  }));
+}
+function renderMatchPreview() {
+  const cutoff = Math.min(Date.now(), matchTime(selected));
+  const opponent = opponentKey(selected.opponent);
+  const history = archive.map(match => ({
+    ...match,
+    playedAt: match.source?.kickoff ?? Date.parse(match.day.split('.').reverse().join('-') + 'T12:00:00+01:00')
+  })).filter(match => match.id !== selected.id && match.playedAt < cutoff)
+    .sort((first, second) => second.playedAt - first.playedAt);
+  const previousMeetings = history.filter(match =>
+    opponentKey(match.source?.opponent ?? (match.home === clubName ? match.away : match.home)) === opponent
+  );
+  el('opponentHistoryTitle').textContent = 'Tidligere opgør mod ' + selected.opponent;
+  renderPreviewList('recentResults', history.filter(match => /^\d+[–-]\d+$/.test(match.score)).slice(0, 5));
+  renderPreviewList('opponentHistory', previousMeetings);
+}
 function selectedPlayers(role) {
   return [...el(role).querySelectorAll('input:checked')].map(input => input.value);
 }
@@ -179,6 +217,7 @@ function render() {
     el('result').textContent = details.filter(Boolean).join(' ');
   }
   renderSchedule();
+  renderMatchPreview();
 }
 for (const role of ['scorer', 'assist']) {
   el(role).addEventListener('change', () => updatePlayerCount(role));
@@ -292,9 +331,13 @@ async function refreshMatches() {
     const currentPicks = {scorer:selectedPlayers('scorer'), assist:selectedPlayers('assist')};
     selected = nextSelected;
     schedule = next;
-    archive = matches.filter(match => match.result || (match.cancelled && match.kickoff < now)).reverse()
-      .map(match => ({id:match.id, competition:match.competition, home:match.homeName,
-        away:match.awayName, day:dateLabel(match), score:match.result?.join('–') ?? 'Aflyst', source:match}));
+    const knownIds = new Set(matches.map(match => match.id));
+    archive = [
+      ...matches.filter(match => match.result || (match.kickoff < now && (match.resultStatus || match.cancelled)))
+        .reverse().map(match => ({id:match.id, competition:match.competition, home:match.homeName,
+          away:match.awayName, day:dateLabel(match), score:match.result?.join('–') ?? match.resultStatus ?? 'Aflyst', source:match})),
+      ...pastFixtures.filter(match => !knownIds.has(match.id))
+    ];
     matchDataReady = true;
     el('matchFeedStatus').textContent = local ? 'Serveren bruger det medfølgende kampprogram i denne lokale test.' : schedule.length ? '' : 'Der er ingen kommende kampe i klubbens program lige nu.';
     if (selectionChanged) restoreForm();
