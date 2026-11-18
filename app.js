@@ -5,6 +5,7 @@ let archive = pastFixtures;
 let schedule = fixtures;
 let state = readState();
 let savingTip = false;
+let savingAlias = false;
 let competitionName = '';
 let requestedMatch = new URLSearchParams(location.search).get('kamp');
 
@@ -137,7 +138,10 @@ function restoreForm() {
   el('away').value = tip?.score[1] ?? '';
   restorePlayerPicks('scorer', tip?.scorer);
   restorePlayerPicks('assist', tip?.assist);
-  el('alias').value = competitionName || tip?.name || state.alias || '';
+  const alias = el('alias');
+  if (alias.value === alias.defaultValue) {
+    alias.value = alias.defaultValue = competitionName || tip?.name || state.alias || '';
+  }
   el('feedback').textContent = tip ? 'Dit gemte tip: ' + tip.score.join('–') + '.' : '';
 }
 function render() {
@@ -152,8 +156,10 @@ function render() {
   el('matchDate').textContent = dateLabel(selected);
   el('homeLabel').textContent = home;
   el('awayLabel').textContent = away;
-  for (const id of ['home','away','alias','save']) el(id).disabled = locked;
-  el('alias').disabled ||= Boolean(competitionName);
+  for (const id of ['home','away']) el(id).disabled = locked;
+  el('save').disabled = locked || savingAlias;
+  el('alias').disabled = savingTip || savingAlias || (!competitionName && locked);
+  renderAliasButton();
   const hasSquad = Boolean(selected.squad?.length);
   el('playerTips').disabled = locked;
   el('squadStatus').textContent = hasSquad
@@ -178,9 +184,65 @@ function render() {
 for (const role of ['scorer', 'assist']) {
   el(role).addEventListener('change', () => updatePlayerCount(role));
 }
+
+function renderAliasButton() {
+  const button = el('saveAlias');
+  button.hidden = !competitionName;
+  button.disabled = savingTip || savingAlias || el('alias').value.trim() === competitionName;
+}
+
+async function updateAlias(name) {
+  const profile = competitionName
+    ? await competitionRequest('profile/name', {name})
+    : await ensureCompetitionProfile(name);
+  competitionName = profile.name;
+  const field = el('alias');
+  field.value = field.defaultValue = competitionName;
+  state.alias = competitionName;
+  persist(state);
+}
+
+async function saveAlias() {
+  if (!competitionName || savingTip || savingAlias) return;
+  const field = el('alias');
+  const status = el('aliasStatus');
+  const name = field.value.trim();
+  if (name === competitionName) return;
+  if (!name) {
+    status.textContent = 'Skriv dit kaldenavn.';
+    field.focus();
+    return;
+  }
+  savingAlias = true;
+  status.textContent = '';
+  render();
+  try {
+    await updateAlias(name);
+    status.textContent = 'Dit kaldenavn er opdateret.';
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    savingAlias = false;
+    render();
+    field.focus();
+  }
+}
+
+el('alias').addEventListener('input', () => {
+  el('aliasStatus').textContent = '';
+  renderAliasButton();
+});
+el('alias').addEventListener('keydown', event => {
+  if (event.key === 'Enter' && competitionName && !event.isComposing) {
+    event.preventDefault();
+    saveAlias();
+  }
+});
+el('saveAlias').addEventListener('click', saveAlias);
+
 el('guess').addEventListener('submit', async event => {
   event.preventDefault();
-  if (savingTip || !matchDataReady || selected.cancelled || selected.result || Date.now() >= matchTime(selected)) return;
+  if (savingTip || savingAlias || !matchDataReady || selected.cancelled || selected.result || Date.now() >= matchTime(selected)) return;
   const name = el('alias').value.trim();
   if (!name) { el('feedback').textContent = 'Skriv dit kaldenavn.'; el('alias').focus(); return; }
   const match = selected;
@@ -193,9 +255,11 @@ el('guess').addEventListener('submit', async event => {
   savingTip = true;
   render();
   try {
-    const profile = await ensureCompetitionProfile(name);
-    competitionName = profile.name;
-    el('alias').value = competitionName;
+    if (name !== competitionName) {
+      const renaming = Boolean(competitionName);
+      await updateAlias(name);
+      if (renaming) el('aliasStatus').textContent = 'Dit kaldenavn er opdateret.';
+    }
     const {tip} = await competitionRequest('tips', payload);
     state.tips[match.id] = tip;
     state.alias = tip.name;
@@ -209,11 +273,14 @@ el('guess').addEventListener('submit', async event => {
   }
 });
 async function loadCompetitionProfile() {
+  const loadedName = competitionName;
   try {
     const profile = await competitionRequest('profile');
-    competitionName = profile.name;
+    if (!savingTip && !savingAlias && competitionName === loadedName) {
+      competitionName = profile.name;
+      if (profile.name) state.alias = profile.name;
+    }
     Object.assign(state.tips, profile.tips);
-    if (profile.name) state.alias = profile.name;
     restoreForm();
     render();
   } catch {
@@ -263,6 +330,7 @@ window.addEventListener('pageshow', event => {
   if (event.persisted) {
     state = readState();
     restoreForm();
+    loadCompetitionProfile();
     refreshMatches();
   }
 });
